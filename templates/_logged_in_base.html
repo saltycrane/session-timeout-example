@@ -1,0 +1,31 @@
+{% extends "_base.html" %}
+
+{% block modals %}
+    <div class="modal" id="session-warning-modal" tabindex="-1" role="dialog" aria-labelledby="sessWarnLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="sessWarnLabel">Your session is about to expire</h4>
+                </div>
+                <div class="modal-body">
+                    Your session will expire in {{ TIME_BEFORE_WARNING_MINUTES }} minutes due to inactivity.
+                </div>
+                <div class="modal-footer">
+                    <button id="log-out" type="button" class="btn btn-default" data-dismiss="modal">Log Out</button>
+                    <button id="stay-logged-in" type="button" class="btn btn-warning" data-dismiss="modal">Stay Logged In</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock modals %}
+
+{% block page_end_script %}
+    <script type="text/javascript">
+        window.myapp = {
+            PERMANENT_SESSION_LIFETIME_MS: {{ PERMANENT_SESSION_LIFETIME_MS }},
+            TIME_BEFORE_WARNING_MS: {{ TIME_BEFORE_WARNING_MS }},
+            MIN_PING_INTERVAL_MS: {{ MIN_PING_INTERVAL_MS }}
+        };
+    </script>
+    <script src="{{ url_for('static', filename='myapp.js')}}"></script>
+{% endblock %}

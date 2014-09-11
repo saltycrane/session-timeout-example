@@ -1,0 +1,13 @@
+{% extends "_base.html" %}
+
+{% block content %}
+    <h4>Login</h4>
+    {% if message %}
+        <div class="alert alert-danger" role="alert">{{ message }}</div>
+    {% endif %}
+    <form method="POST" action="/login">
+        Username: {{ form.username }}
+        Password: {{ form.password }}
+        <button type="submit">Login</button>
+    </form>
+{% endblock content %}

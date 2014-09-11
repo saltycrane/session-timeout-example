@@ -1,0 +1,10 @@
+{% extends "_base.html" %}
+
+{% block content %}
+    {% if timed_out %}
+        <h4>Your session has expired. You have been logged out.</h4>
+    {% else %}
+        <h4>You have logged out.</h4>
+    {% endif %}
+    <a href="{{ url_for('.login') }}">Log in</a>
+{% endblock content %}

@@ -1,0 +1,8 @@
+{% extends "_logged_in_base.html" %}
+
+{% block content %}
+    <h4>You have been logged in.</h4>
+
+    <a href="{{ url_for('.another_page') }}">Another Page</a>
+    <a href="{{ url_for('.logout') }}">Log out</a>
+{% endblock content %}
