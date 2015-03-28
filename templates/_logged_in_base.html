@@ -1,18 +1,18 @@
 {% extends "_base.html" %}
 
 {% block modals %}
-    <div class="modal" id="session-warning-modal" tabindex="-1" role="dialog" aria-labelledby="sessWarnLabel" aria-hidden="true">
+    <div id="session-warning-modal" class="modal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="sessWarnLabel">Your session is about to expire</h4>
                 </div>
                 <div class="modal-body">
-                    Your session will expire in {{ TIME_BEFORE_WARNING_MINUTES }} minutes due to inactivity.
+                    Your session will expire in <span id="remaining-time"></span> minutes due to inactivity.
                 </div>
                 <div class="modal-footer">
-                    <button id="log-out" type="button" class="btn btn-default" data-dismiss="modal">Log Out</button>
-                    <button id="stay-logged-in" type="button" class="btn btn-warning" data-dismiss="modal">Stay Logged In</button>
+                    <button id="log-out" class="btn btn-default" type="button" data-dismiss="modal">Log Out</button>
+                    <button id="stay-logged-in" class="btn btn-warning" type="button" data-dismiss="modal">Stay Logged In</button>
                 </div>
             </div>
         </div>
@@ -20,12 +20,45 @@
 {% endblock modals %}
 
 {% block page_end_script %}
+    <script src="{{ url_for('static', filename='session-monitor.js')}}"></script>
     <script type="text/javascript">
-        window.myapp = {
-            PERMANENT_SESSION_LIFETIME_MS: {{ PERMANENT_SESSION_LIFETIME_MS }},
-            TIME_BEFORE_WARNING_MS: {{ TIME_BEFORE_WARNING_MS }},
-            MIN_PING_INTERVAL_MS: {{ MIN_PING_INTERVAL_MS }}
-        };
+        // Configure and start the session timeout monitor
+        sessMon = sessionMonitor({
+
+            // NORMAL VALUES BELOW
+            // // Subtract 1 minute to ensure the backend doesn't expire the session first
+            // sessionLifetime: {{ PERMANENT_SESSION_LIFETIME_MS }} - (1 * 60 * 1000),
+            // timeBeforeWarning: 10 * 60 * 1000,  // 10 minutes
+            // minPingInterval: 1 * 60 * 1000,  // 1 minute
+
+            // VERY SMALL VALUES FOR DEMO PURPOSES ONLY
+            sessionLifetime: 14 * 1000,  // 14 seconds
+            timeBeforeWarning: 6 * 1000,  // 6 seconds
+            minPingInterval: 2 * 1000,  // 2 seconds
+
+            pingUrl: '/ping',
+            logoutUrl: '/logout',
+            timeoutUrl: '/logged-out?timeout=1&next=' + encodeURIComponent(
+                window.location.pathname + window.location.search + window.location.hash),
+            // The "mouseup" event was used instead of "click" because some of the
+            // inner elements on some pages have click event handlers that stop propagation.
+            activityEvents: 'mouseup',
+            onwarning: function() {
+                $("#session-warning-modal").modal("show");
+            }
+        });
+        $(document).ready( function() {
+            // Configure the session timeout warning modal
+            $("#session-warning-modal")
+                .modal({
+                    "backdrop": "static",
+                    "keyboard": false,
+                    "show": false
+                })
+                .on("click", "#stay-logged-in", sessMon.extendsess)
+                .on("click", "#log-out", sessMon.logout)
+                .find("#remaining-time").text(Math.round(sessMon.timeBeforeWarning / 60 / 1000));
+        });
+        window.sessMon = sessMon;
     </script>
-    <script src="{{ url_for('static', filename='myapp.js')}}"></script>
 {% endblock %}

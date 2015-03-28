@@ -22,14 +22,6 @@ SECRET_KEY = 'insert secret key here'
 # (this is a Flask setting and is also used by the Javascript)
 PERMANENT_SESSION_LIFETIME = datetime.timedelta(minutes=60)
 
-# The amount of time before session expiration when the warning is shown
-# (this is used by the Javascript)
-TIME_BEFORE_WARNING = datetime.timedelta(minutes=10)
-
-# The minimum time between pings to the server
-# (this is used by the Javascript)
-MIN_PING_INTERVAL = datetime.timedelta(minutes=1)
-
 
 # init ###############################################################
 app = Flask(__name__)
@@ -54,12 +46,6 @@ def add_session_config():
     return {
         'PERMANENT_SESSION_LIFETIME_MS': (
             app.permanent_session_lifetime.seconds * 1000),
-        'TIME_BEFORE_WARNING_MS': (
-            app.config['TIME_BEFORE_WARNING'].seconds * 1000),
-        'TIME_BEFORE_WARNING_MINUTES': int(round(
-            app.config['TIME_BEFORE_WARNING'].seconds / 60.0)),
-        'MIN_PING_INTERVAL_MS': (
-            app.config['MIN_PING_INTERVAL'].seconds * 1000),
     }
 
 
@@ -118,7 +104,7 @@ def logout():
 
 @app.route("/logged-out")
 def logged_out():
-    timed_out = request.args.get('sessionTimeout')
+    timed_out = request.args.get('timeout')
     return render_template('logged_out.html', timed_out=timed_out)
 
 

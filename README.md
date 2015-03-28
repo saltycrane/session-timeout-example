@@ -15,6 +15,10 @@ Flask-Login, and WTForms on the backend.
  - If the user does nothing for 10 minutes, the user is logged out and
    displayed a message that the session timed out.
 
+The code:
+
+The meat of the code is in [`static/session-monitor.js`](https://github.com/saltycrane/session-timeout-example/blob/master/static/session-monitor.js)
+
 Usage:
 
  - Set up and run the server
@@ -26,5 +30,13 @@ Usage:
 
  - Go to http://127.0.0.1:5000/ in the browser.
  - Enter george for the username and george for the password.
+ - Click the mouse to prolong the session.
+ - Wait several seconds for the warning modal to show up.
+ - Click "Stay Logged In" to stay logged in or do nothing to automatically be logged out.
 
-*Note: I know Python better than Javascript*
+Notes:
+
+ - I set very small timeout values set (i.e. a few seconds) for demo
+   purposes only. In a real application, set them to larger values in
+   the range of minutes to hours.
+ - I know Python better than Javascript.
